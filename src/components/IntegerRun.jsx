@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { FaHome } from "react-icons/fa";
 
-// Recursive Karatsuba function with steps tracking
 const karatsuba = (x, y, depth = 0) => {
   const len = Math.max(x.toString().length, y.toString().length);
 
@@ -18,7 +17,6 @@ const karatsuba = (x, y, depth = 0) => {
 
   const result = z2.result * 10 ** (2 * m) + (z1.result - z2.result - z0.result) * 10 ** m + z0.result;
 
-  // Track each step and formula used at this level
   const steps = [
     { depth, description: `Split: ${x} -> A=${a}, B=${b} | ${y} -> C=${c}, D=${d}` },
     ...z2.steps,
@@ -40,7 +38,6 @@ const splitNumber = (num, m) => {
   return [left, right];
 };
 
-// IntegerRun component for visualization
 const IntegerRun = ({ algorithm,setAlgorithm,mul }) => {
   const [steps, setSteps] = useState([]);
   const [result, setResult] = useState(null);

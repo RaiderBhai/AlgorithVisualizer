@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Scatter } from "react-chartjs-2";
 import { Chart as ChartJS, Title, Tooltip, Legend, LinearScale, PointElement, CategoryScale, LineElement } from 'chart.js';
 
-// Register the components manually
 ChartJS.register(Title, Tooltip, Legend, LinearScale, PointElement, CategoryScale, LineElement);
 
 const PairRun = ({ points }) => {
@@ -12,12 +11,11 @@ const PairRun = ({ points }) => {
   useEffect(() => {
     const visualizeClosestPair = () => {
       const steps = [];
-      
-      // Helper function to calculate distance between two points
+
+
       const distance = (p1, p2) =>
         Math.sqrt((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2);
 
-      // Recursive function to find the closest pair
       const closestPairRecursive = (pointsSortedByX, pointsSortedByY) => {
         steps.push({ type: "split", points: pointsSortedByX });
 
@@ -44,7 +42,6 @@ const PairRun = ({ points }) => {
           return { closestPair, minDist };
         }
 
-        // Split the points
         const mid = Math.floor(pointsSortedByX.length / 2);
         const leftPoints = pointsSortedByX.slice(0, mid);
         const rightPoints = pointsSortedByX.slice(mid);
@@ -53,14 +50,12 @@ const PairRun = ({ points }) => {
         const leftClosest = closestPairRecursive(leftPoints, pointsSortedByY);
         const rightClosest = closestPairRecursive(rightPoints, pointsSortedByY);
 
-        // Combine step
         let minDist = Math.min(leftClosest.minDist, rightClosest.minDist);
         let closestPair =
           leftClosest.minDist < rightClosest.minDist
             ? leftClosest.closestPair
             : rightClosest.closestPair;
 
-        // Check the strip
         const strip = pointsSortedByY.filter(
           (point) => Math.abs(point[0] - midX) < minDist
         );
@@ -86,7 +81,6 @@ const PairRun = ({ points }) => {
         return { closestPair, minDist };
       };
 
-      // Preprocess and start
       const pointsSortedByX = [...points].sort((a, b) => a[0] - b[0]);
       const pointsSortedByY = [...points].sort((a, b) => a[1] - b[1]);
       closestPairRecursive(pointsSortedByX, pointsSortedByY);
@@ -97,7 +91,6 @@ const PairRun = ({ points }) => {
     visualizeClosestPair();
   }, [points]);
 
-  // Move to the next step
   const nextStep = () => {
     if (currentStep < steps.length - 1) setCurrentStep((prev) => prev + 1);
   };
@@ -106,42 +99,40 @@ const PairRun = ({ points }) => {
     if (currentStep > 0) setCurrentStep((prev) => prev - 1);
   };
 
-  // Skip directly to the final step
   const skipToFinalStep = () => {
     setCurrentStep(steps.length - 1);
   };
 
-  // Prepare data for the chart
   const renderChartData = () => {
     const pointsData = steps[currentStep]?.points || points;
-    const splitX = steps[currentStep]?.midX || 5; // Split point from the current step
+    const splitX = steps[currentStep]?.midX || 5;
 
     const chartData = {
       datasets: [
         {
-          label: "Closest Pair", // Closest pair rendered first to be on top
+          label: "Closest Pair",
           data: steps[currentStep]?.closestPair
             ? steps[currentStep]?.closestPair.map(([x, y]) => ({ x, y }))
             : [],
-          backgroundColor: "red", // Closest pair in red
-          radius: 6, // Increase size of closest pair points
+          backgroundColor: "red",
+          radius: 6,
         },
         {
           label: "Points",
           data: pointsData.map(([x, y]) => ({ x, y })),
           backgroundColor: "blue",
-          radius: 3, // Smaller regular points
+          radius: 3,
         },
         {
           label: "Split Line",
           data: [
             { x: splitX, y: 0 },
-            { x: splitX, y: 10 }, // Adjust y-values to match the graph's scale
+            { x: splitX, y: 10 },
           ],
           borderColor: "black",
           borderWidth: 2,
           fill: false,
-          type: "line", // Render as a line
+          type: "line",
         },
       ],
     };
