@@ -7,11 +7,11 @@ ChartJS.register(Title, Tooltip, Legend, LinearScale, PointElement, CategoryScal
 const PairRun = ({ points }) => {
   const [steps, setSteps] = useState([]);
   const [currentStep, setCurrentStep] = useState(0);
+  const [finalResult, setFinalResult] = useState({ closestPair: null, minDist: null });
 
   useEffect(() => {
     const visualizeClosestPair = () => {
       const steps = [];
-
 
       const distance = (p1, p2) =>
         Math.sqrt((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2);
@@ -83,9 +83,10 @@ const PairRun = ({ points }) => {
 
       const pointsSortedByX = [...points].sort((a, b) => a[0] - b[0]);
       const pointsSortedByY = [...points].sort((a, b) => a[1] - b[1]);
-      closestPairRecursive(pointsSortedByX, pointsSortedByY);
+      const result = closestPairRecursive(pointsSortedByX, pointsSortedByY);
 
       setSteps(steps);
+      setFinalResult(result);
     };
 
     visualizeClosestPair();
@@ -157,6 +158,13 @@ const PairRun = ({ points }) => {
               Skip to Final Step
             </button>
           </div>
+          {currentStep === steps.length - 1 && finalResult.closestPair && (
+            <div className="result">
+              <h3>Final Result</h3>
+              <p>Closest Pair: {JSON.stringify(finalResult.closestPair)}</p>
+              <p>Distance: {finalResult.minDist.toFixed(2)}</p>
+            </div>
+          )}
         </div>
       ) : (
         <p>Loading...</p>
